@@ -1,23 +1,37 @@
-function images = findAllImagesInFolders(folderName,fileType,frontConstraint)
-%finds all images within 'folderName' (recursively) whose names end in 
-%'fileType' and start with 'frontConstraint
+function images = findAllImagesInFolders(folder,fileType,frontConstraint)
 
-    if nargin==1
-        fileType = '.tiff';
+    if nargin < 2 || isempty(fileType)
+        fileType = '.tif';
     end
     
-    if nargin < 3 || isempty(frontConstraint) == 1
-        frontConstraint = '';
+    if nargin < 3 || isempty(frontConstraint)
+        frontConstraint = [];
+    end
+
+    
+    MAXIMAGES = 100000;
+    count = 1;
+    images = cell(MAXIMAGES,1);
+    
+    currentDirectory = dir(folder);
+    b = {currentDirectory(:).name};
+    currentDirs = b([currentDirectory(:).isdir] & returnCellLengths(b)>2);
+    
+    a = findImagesInFolder(folder,fileType,frontConstraint);
+    for i=1:length(a)      
+        images{i} = [folder slashVal() a{i}];
+        count = count + 1;
     end
     
-    
-    if folderName(end) ~= '/'
-        folderName = strcat(folderName, '/');
+    if ~isempty(currentDirs)
+        for i=1:length(currentDirs)
+            a = findImagesInFolder([folder slashVal() currentDirs{i} slashVal()],fileType,frontConstraint);
+            for j=1:length(a)
+                images{count} = [folder slashVal() currentDirs{i} slashVal() a{j}];
+                count = count + 1;
+            end
+        end
     end
-    
-    [~,temp] = unix(['find ' folderName ' -name ' frontConstraint '*' fileType]);
-    images = regexp(temp,'\n','split')';
-    imageLengths = returnCellLengths(images);
-    images = images(imageLengths > length(fileType));
-    
+
+    images = images(1:count-1);
     

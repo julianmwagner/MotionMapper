@@ -24,7 +24,7 @@ function [meanRadon,stdRadon,vidObjs] = findImageSubsetStatistics(alignedImageDi
     
     lengths = zeros(L,1);
     vidObjs = cell(L,1);
-    parfor i=1:L
+    for i=1:L
         vidObjs{i} = VideoReader(files{i});
         lengths(i) = vidObjs{i}.NumberOfFrames;
     end
