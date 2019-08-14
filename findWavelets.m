@@ -46,6 +46,8 @@ function [amplitudes,f] = findWavelets(projections,numModes,parameters)
     Ts = minT.*2.^((0:numPeriods-1).*log(maxT/minT)/(log(2)*(numPeriods-1)));
     f = fliplr(1./Ts);
     
+    numModes
+    numPeriods
     
     N = length(projections(:,1));
     amplitudes = zeros(N,numModes*numPeriods);
